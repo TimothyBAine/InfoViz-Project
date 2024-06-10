@@ -71,9 +71,9 @@
 
         function closeNav() {
             document.getElementById("myNav").style.width = "0%";
-        }
+        };
         /// params
-
+    
         var color_na = d3.rgb("#d4d4d4");
         var currMapdata = [];
         var data_deaths=[];
@@ -265,115 +265,72 @@
 
         // load data
         d3.csv("data/boxMatrixData.csv", function(dataTemp) {  
-        d3.json("data/all_data10.json", function(error, d) {
+            d3.json("data/all_data10.json", function(error, d) {
 
-            dataRyan = dataTemp;
-            for (let key of Object.keys(dataRyan)) {
-                //console.log("Mcheck: ", dataRyan[key].id);
+                dataRyan = dataTemp;
+                for (let key of Object.keys(dataRyan)) {
+                    //console.log("Mcheck: ", dataRyan[key].id);
 
-            }
-            //console.log("cmapping: ",cmapping['AFG']);
+                }
+                //console.log("cmapping: ",cmapping['AFG']);
 
-			if (error) throw error;
-			data_full = d;
-            data_deaths = d['Deaths'];
-            data_GDP = d['GDPPercent'];
-
-            let dataD = data_deaths[init_year];
-            let dataG = data_GDP[init_year];
-            let color = calcColorScale(computeranges(data_deaths));
-            console.log(color(150));
-            colorBubbles = calcColorScaleBubbles(data_GDP);
-
-
-            // load map data and render it
-            d3.json("data/world.json", function(error, worldmap) {
                 if (error) throw error;
+                data_full = d;
+                data_deaths = d['Deaths'];
+                data_GDP = d['GDPPercent'];
 
-                // init map
-                svg_map.append("g")
-                    .attr("class", "countries")
-                    .selectAll("path")
-                    .data(topojson.feature(worldmap, worldmap.objects.world).features)
-                    .enter().append("path")
-                    .attr("d", path)
-                    .attr("id", function(d) {
-                        //console.log(d.id);
-                        return d.id;
-                    })
-                    .on("click", function(arg1, i){
-                        //d3.select(".selected").classed("selected", false);
-                        onClickfunc(this,arg1,i);
-                        //renderBoxPlot(dataTemp);
-                    })
-                    .on("mouseover", function(d) {            // code for hover tooltip
-                        div.transition()
-                        .duration(200)
-                        .style("opacity", .9);
-                        //console.log("for val check: ",computeranges(data_full[selected_dataset])[d.id]);//computeranges[data_full[selected_dataset]]);
-                        div.html(data_full['countryMapping']['1990'][d.id] + "<br/>" + fixtext+": "+Math.round(100*computeranges(data_full[selected_dataset])[d.id])/100)
-                        .style("left", (d3.event.pageX) + "px")
-                        .style("top", (d3.event.pageY - 28) + "px");
-                    })
-                    .on("mouseout", function(d) {
-                        div.transition()
-                        .duration(500)
-                        .style("opacity", 0);
-                    })  
-                    .call(fillMap, color, computeranges(data_deaths))
-                    //.append("title")
-                    //.call(setPathTitle, computeranges(data_deaths));
+                // let dataD = data_deaths[init_year];
+                // let dataG = data_GDP[init_year];
+                let color = calcColorScale(computeranges(data_deaths));
+                console.log(color(150));
+                colorBubbles = calcColorScaleBubbles(data_GDP);
 
-             //      let myKeys = d3.keys(dataD['Deaths']);
-               //     let temp = d3.values(dataD['Deaths']);
-
-
-                 /*   for(let myX in myKeys){
-                        temp[myX]['date'] = parseTime(myKeys[myX]);
-                    };
-                    mydata = temp;*/
                 
-                // init legend
-                renderLegend(color, computeranges(data_deaths));
-//<<<<<<< HEAD
-                //renderBars(calcColorScale(computeranges(data_full['HDI'])), computeranges(data_full['HDI']));
-                renderCircles(calcColorScaleBubbles(data_GDP), computeranges(data_GDP));
-//=======
-                //renderBars(color, data_full['DHSFS']['2013']);
-                //renderCircles(calcColorScaleBubbles(data_GDP), computeranges(data_GDP));
-//>>>>>>> 265bc18563f7a15b03c04348851bb91e0e15dae5
-                renderArea(data_deaths);
-                renderDP(computeranges(d['DeathsMale']), computeranges(d['DeathsFemale']), computeranges(d['DeathsChildren']));
-                renderBoxPlot(dataTemp);
-   //         });
-            }); // map data
+                // load map data and render it
+                d3.json("data/world.json", function(error, worldmap) {
+                    if (error) throw error;
 
+                    // init map
+                    svg_map.append("g")
+                        .attr("class", "countries")
+                        .selectAll("path")
+                        .data(topojson.feature(worldmap, worldmap.objects.world).features)
+                        .enter().append("path")
+                        .attr("d", path)
+                        .attr("id", function(d) {
+                            //console.log(d.id);
+                            return d.id;
+                        })
+                        .on("click", function(arg1, i){
+                            //d3.select(".selected").classed("selected", false);
+                            onClickfunc(this,arg1,i);
+                            //renderBoxPlot(dataTemp);
+                        })
+                        .on("mouseover", function(d) {            // code for hover tooltip
+                            div.transition()
+                            .duration(200)
+                            .style("opacity", .9);
+                            //console.log("for val check: ",computeranges(data_full[selected_dataset])[d.id]);//computeranges[data_full[selected_dataset]]);
+                            div.html(data_full['countryMapping']['1990'][d.id] + "<br/>" + fixtext+": "+Math.round(100*computeranges(data_full[selected_dataset])[d.id])/100)
+                            .style("left", (d3.event.pageX) + "px")
+                            .style("top", (d3.event.pageY - 28) + "px");
+                        })
+                        .on("mouseout", function(d) {
+                            div.transition()
+                            .duration(500)
+                            .style("opacity", 0);
+                        })  
+                        .call(fillMap, color, computeranges(data_deaths))
 
+                    renderLegend(color, computeranges(data_deaths));
 
-            // was the slider used?
-         /*   d3.select("#year").on("input", function() {
-				init_year = this.value;
-                let upd_color = calcColorScale(data_deaths[this.value]);
-                updateMap(upd_color, data_deaths[this.value]);
-                renderLegend(upd_color, data_deaths[this.value]);
-                renderBars(upd_color, data_deaths[this.value]);
-                renderCircles(upd_color, data_GDP[this.value]);
-            });*/
+                    renderCircles(calcColorScaleBubbles(data_GDP), computeranges(data_GDP));
 
-			
-			// dropdown used
-            /*
-			dropDown.on("change", function() {
-				selected_dataset = d3.event.target.value;
-                thisData = d[selected_dataset];
-                let upd_color = calcColorScale(computeranges(thisData));
-                updateMap(upd_color, computeranges(thisData));
-                renderArea(d[selected_dataset]);
+                    renderArea(data_deaths);
+                    renderDP(computeranges(d['DeathsMale']), computeranges(d['DeathsFemale']), computeranges(d['DeathsChildren']));
+                    renderBoxPlot(dataTemp);
 
-            //clicking on map
-            });	*/
-
-            // function renderHIV(){
+                }); 
 
             console.log("thisdata: ",computeranges(d['LWHT']));
             d3.selectAll('#switch_left').on("click", function(arg1, i){  
